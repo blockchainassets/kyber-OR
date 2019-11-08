@@ -28,12 +28,15 @@ const ETH_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const KNC_ADDRESS = '0x8c13AFB7815f10A8333955854E6ec7503eD841B7';
 const OMG_ADDRESS = '0x3750bE154260872270EbA56eEf89E78E6E21C1D9';
 const MANA_ADDRESS = '0xe19Ec968c15f487E96f631Ad9AA54fAE09A67C8c';
+const BAX_ADDRESS = '0xA46E01606f9252fa833131648f4D855549BcE9D9';
 const KNC_ABI = JSON.parse(fs.readFileSync('./abi/KNC.abi', 'utf8'));
 const OMG_ABI = JSON.parse(fs.readFileSync('./abi/OMG.abi', 'utf8'));
 const MANA_ABI = JSON.parse(fs.readFileSync('./abi/MANA.abi', 'utf8'));
+const BAX_ABI = JSON.parse(fs.readFileSync('./abi/Bax.abi', 'utf8'));
 const KNCInstance = new web3.eth.Contract(KNC_ABI, KNC_ADDRESS);
 const OMGInstance = new web3.eth.Contract(OMG_ABI, OMG_ADDRESS);
 const MANAInstance = new web3.eth.Contract(MANA_ABI, MANA_ADDRESS);
+const BAXInstance = new web3.eth.Contract(BAX_ABI, BAX_ADDRESS);
 
 const userWallet = addresses[4];
 
@@ -85,6 +88,7 @@ async function main() {
   KNCInstance.setProvider(provider);
   OMGInstance.setProvider(provider);
   MANAInstance.setProvider(provider);
+  BAXInstance.setProvider(provider);
 
   stdlog('- START -');
   stdlog(`KyberNetworkProxy (${KyberNetworkProxyAddress})`);
@@ -105,6 +109,11 @@ async function main() {
   stdlog(
     `MANA balance of ${userWallet} = ${web3.utils.fromWei(
       await MANAInstance.methods.balanceOf(userWallet).call(),
+    )}`,
+  );
+  stdlog(
+    `BAX balance of ${userWallet} = ${web3.utils.fromWei(
+      await BAXInstance.methods.balanceOf(userWallet).call(),
     )}`,
   );
 
@@ -128,6 +137,50 @@ async function main() {
   );
   result = await sendTx(txObject, KyberNetworkProxyAddress, web3.utils.toWei('1'));
   tx(result, 'ETH <-> KNC trade()');
+
+  //ETH <-> BAX TRADE
+    ({ expectedRate, slippageRate } = await NetworkProxyInstance.methods
+    .getExpectedRate(
+      ETH_ADDRESS, // srcToken
+      BAX_ADDRESS, // destToken
+      web3.utils.toWei('1'), // srcQty
+    )
+    .call());
+
+  // Perform an ETH to BAX trade
+  txObject = NetworkProxyInstance.methods.trade(
+    ETH_ADDRESS, // srcToken
+    web3.utils.toWei('1'), // srcAmount
+    BAX_ADDRESS, // destToken
+    userWallet, // destAddress
+    web3.utils.toWei('100000'), // maxDestAmount
+    expectedRate, // minConversionRate
+    '0x0000000000000000000000000000000000000000', // walletId
+  );
+  result = await sendTx(txObject, KyberNetworkProxyAddress, web3.utils.toWei('1'));
+  tx(result, 'ETH <-> BAX trade()');
+
+  //TOKEN <-> BAX Trade
+    ({ expectedRate, slippageRate } = await NetworkProxyInstance.methods
+    .getExpectedRate(
+      ETH_ADDRESS, // srcToken
+      BAX_ADDRESS, // destToken
+      web3.utils.toWei('.9'), // srcQty
+    )
+    .call());
+
+  // Perform an ETH to BAX trade
+  txObject = NetworkProxyInstance.methods.trade(
+    BAX_ADDRESS, // srcToken
+    web3.utils.toWei('1000'), // srcAmount
+    ETH_ADDRESS, // destToken
+    userWallet, // destAddress
+    web3.utils.toWei('.9'), // maxDestAmount
+    expectedRate, // minConversionRate
+    '0x0000000000000000000000000000000000000000', // walletId
+  );
+  result = await sendTx(txObject, KyberNetworkProxyAddress, web3.utils.toWei('1000'));
+  tx(result, 'BAX <-> ETH trade()');
 
   // Approve the KyberNetwork contract to spend user's tokens
   txObject = KNCInstance.methods.approve(KyberNetworkProxyAddress, web3.utils.toWei('10000'));
@@ -189,6 +242,11 @@ async function main() {
   stdlog(
     `MANA balance of ${userWallet} = ${web3.utils.fromWei(
       await MANAInstance.methods.balanceOf(userWallet).call(),
+    )}`,
+  );
+  stdlog(
+    `BAX balance of ${userWallet} = ${web3.utils.fromWei(
+      await BAXInstance.methods.balanceOf(userWallet).call(),
     )}`,
   );
 

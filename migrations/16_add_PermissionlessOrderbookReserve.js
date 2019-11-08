@@ -7,7 +7,7 @@ const OrderbookReserve = artifacts.require('./permissionless/OrderbookReserve.so
 const OrderbookReserveLister = artifacts.require('./permissionless/PermissionlessOrderbookReserveLister.sol');
 
 const KNC = artifacts.require('./mockTokens/KyberNetworkCrystal.sol');
-const SNT = artifacts.require('./mockTokens/Status.sol');
+const BAX = artifacts.require('./mockTokens/Bax.sol');
 
 const tokenConfig = JSON.parse(fs.readFileSync('../config/tokens.json', 'utf8'));
 

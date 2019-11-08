@@ -10,7 +10,7 @@ const OMG = artifacts.require('./mockTokens/OmiseGo.sol');
 const SALT = artifacts.require('./mockTokens/Salt.sol');
 const ZIL = artifacts.require('./mockTokens/Zilliqa.sol');
 const MANA = artifacts.require('./mockTokens/Mana.sol');
-const SNT = artifacts.require('./mockTokens/Status.sol');
+const BAX = artifacts.require('./mockTokens/Bax.sol');
 
 function tx(result, call) {
   const logs = (result.logs.length > 0) ? result.logs[0] : { address: null, event: null };
@@ -36,7 +36,7 @@ module.exports = async (deployer, network, accounts) => {
   const SALTInstance = await SALT.at(SALT.address);
   const ZILInstance = await ZIL.at(ZIL.address);
   const MANAInstance = await MANA.at(MANA.address);
-  const SNTInstance = await SNT.at(SNT.address);
+  const BAXInstance = await BAX.at(BAX.address);
 
   // Set token amounts to transfer to user and reserve wallet
   const KNCAmount = (
@@ -54,8 +54,8 @@ module.exports = async (deployer, network, accounts) => {
   const MANAAmount = (
     new BN(1000000).mul(new BN(10).pow(await MANAInstance.decimals()))
   ).toString();
-  const SNTAmount = (
-    new BN(1000000).mul(new BN(10).pow(await SNTInstance.decimals()))
+  const BAXAmount = (
+    new BN(1000000).mul(new BN(10).pow(await BAXInstance.decimals()))
   ).toString();
 
   // Transfer tokens to the user
@@ -64,7 +64,7 @@ module.exports = async (deployer, network, accounts) => {
   tx(await SALTInstance.transfer(userWallet, SALTAmount), 'transfer()');
   tx(await ZILInstance.transfer(userWallet, ZILAmount), 'transfer()');
   tx(await MANAInstance.transfer(userWallet, MANAAmount), 'transfer()');
-  tx(await SNTInstance.transfer(userWallet, SNTAmount), 'transfer()');
+  tx(await BAXInstance.transfer(userWallet, BAXAmount), 'transfer()');
 
   // Transfer tokens and ETH to the reserve
   tx(await KNCInstance.transfer(Reserve.address, KNCAmount), 'transfer()');

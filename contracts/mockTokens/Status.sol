@@ -132,13 +132,13 @@ contract StandardToken is BasicToken, ERC20 {
 }
 
 
-contract Status is StandardToken, StandardBurnableToken {
-    string public name = "Status";
-    string public symbol = "SNT";
+contract Bax is StandardToken, StandardBurnableToken {
+    string public name = "Bax";
+    string public symbol = "BAX";
     uint8 public decimals = 18;
-    uint public totalSupply = 21 * (10 ** 24);
+    uint public totalSupply = 10 * (10 ** 24);
 
-    function Status() public {
+    function Bax() public {
         balances[msg.sender] = totalSupply;
     }
 }

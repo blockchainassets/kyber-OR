@@ -26,7 +26,7 @@ const SALT = artifacts.require('./mockTokens/Salt.sol');
 const ZIL = artifacts.require('./mockTokens/Zilliqa.sol');
 const MANA = artifacts.require('./mockTokens/Mana.sol');
 const POLY = artifacts.require('./mockTokens/Polymath.sol');
-const SNT = artifacts.require('./mockTokens/Status.sol');
+const BAX = artifacts.require('./mockTokens/Bax.sol');
 
 const networkConfig = JSON.parse(fs.readFileSync('../config/network.json', 'utf8'));
 const tokenConfig = JSON.parse(fs.readFileSync('../config/tokens.json', 'utf8'));
